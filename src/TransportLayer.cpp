@@ -251,6 +251,11 @@ bool TransportLayerMachine::check_formatter_intercept_cmd(uint8_t sys, uint8_t c
             return true;
         }
     }
+    if (sys == 0x0d) {
+        if ((cmd >> 4) == 0x03) {
+            return true;
+        }
+    }
     return false;
 }
 
@@ -282,7 +287,21 @@ bool TransportLayerMachine::handle_intercept_cmd(SystemManager& sys_man, Command
             utilities::error_log("TransportLayerMachine::handle_intercept_cmd()\tcannot change housekeeping state due to ::system_state.");
         }
     }
-
+    if (sys_man.system.name == "timepix") {
+        // command to disable timepix readout
+        if (0x30 == cmd.hex) {
+            sys_man.enable = 0x00;
+            utilities::debug_log("TransportLayerMachine::handle_intercept_cmd()\tset timepix readout enable to 0x00.");
+            return true;
+        } else if (0x31 == cmd.hex) {
+            utilities::debug_log("TransportLayerMachine::handle_intercept_cmd()\tset timepix readout enable to 0x01.");
+            sys_man.enable = 0x01;
+            return true;
+        } else {
+            utilities::error_log("TransportLayerMachine::handle_intercept_cmd()\treceived bad timepix command value.");
+            return false;
+        }
+    }
     return true;
 }
 
