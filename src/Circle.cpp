@@ -507,9 +507,9 @@ void Circle::manage_systems() {
         
         SystemManager* timepix = Circle::get_sys_man_for_name("timepix");
         
+        transport->sync_send_buffer_commands_to_system(*Circle::get_sys_man_for_name("timepix"));
+        
         if (timepix->enable & 0x01) {
-            transport->sync_send_buffer_commands_to_system(*Circle::get_sys_man_for_name("timepix"));
-            
             Command flags_req_cmd  = deck->get_command_for_sys_for_code(timepix->system.hex, 0x8a);
             Command hk_req_cmd     = deck->get_command_for_sys_for_code(timepix->system.hex, 0x88);
             Command rates_req_cmd  = deck->get_command_for_sys_for_code(timepix->system.hex, 0x81);
